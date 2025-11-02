@@ -1,23 +1,46 @@
-#ProcessData.py
-#Name:
-#Date:
-#Assignment:
-
-import random
-
 def main():
+    with open("names.dat", "r") as infile, open("StudentList.csv", "w") as outfile:
+        infile.readline()
 
-  #Open the files we will be using
-  inFile = open("names.dat", 'r')
-  outFile = open("StudentList.csv", 'w')
+        for line in infile:
+            if line.strip() == "":
+                continue
 
-  #Process each line of the input file and output to the CSV file
+            if "|" in line:
+                parts = [p.strip() for p in line.strip().split("|")]
+            else:
+                parts = line.strip().split()
+
+            if len(parts) < 7:
+                continue
+
+            first = parts[0]
+            last = parts[1]
+            student_id = parts[3]
+            year = parts[5]
+            major = parts[6]
+
+            last3 = student_id[-3:]
+            userid = first[0].lower() + last.lower() + last3
+            last = last.ljust(5, "X")
+            major_abbrev = major[:3].upper()
+
+            if year.lower().startswith("fresh"):
+                year_abbrev = "FR"
+            elif year.lower().startswith("soph"):
+                year_abbrev = "SO"
+            elif year.lower().startswith("jun"):
+                year_abbrev = "JR"
+            elif year.lower().startswith("sen"):
+                year_abbrev = "SR"
+            else:
+                year_abbrev = "NA"
+
+            major_year = f"{major_abbrev}-{year_abbrev}"
+            outfile.write(f"{last},{first},{userid},{major_year}\n")
+
+    print("File 'StudentList.csv' created successfully!")
 
 
-
-  #Close files in the end to save and ensure they are not damaged.
-  inFile.close()
-  outFile.close()
-
-if __name__ == '__main__':
-  main()
+if __name__ == "__main__":
+    main()
